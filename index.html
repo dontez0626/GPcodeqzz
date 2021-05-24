@@ -1,56 +1,43 @@
-<!-- @format -->
-
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title></title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <meta charset="UTF-8">
+    <!-- This is the first step in making the document responsive but scaling the items to screen -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Jamie Morris Homework-4 Code Quiz -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- This is the style links -->
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+    <!-- This is the title-->
+    <title>Code Quiz</title>
 </head>
 
 <body>
-    <!--view high score-->
-    <div class="save-score">View High Score</div>
-    <!--start quiz button-->
-    <div class="start-btn"><button>Start Code Quiz!</button></div>
-    <!--code quiz box-->
-    <div class="quiz-box">
-        <header>
-            <div class="quiz-title">GPcodeqzz</div>
-            <div class="countdown-timer">
-                <div class="time">Time</div>
-                <div class="timer-seconds">75</div>
-            </div>
-        </header>
-        <section>
-            <!--question one-->
-            <div class="question-one"></div>
-
-            <!--multiple choice answers-->
-            <div class="answer-choices"></div>
-        </section>
-
-
-
-        <footer>
-            <!--correct or incorrect section-->
-            <div class="answer-grade"></div>
-        </footer>
-
-        <!--see results and save initials box-->
-        <div class="save-score"></div>
-        <div class="quiz-end-text">Congrats!You have completed GPcodeqzz!</div>
-        <div class="buttons"><button class="restart">Restart GPcodeqzz</button>
-            <button class="Quit">Quit GPcodeqzz</button>
+    <!-- Link to highscores -->
+    <a href="HighScores.html">View Highscores</a>
+    <!-- This is a wrapper -->
+    <div id="wrapper">
+        <!-- Div for timer -->
+        <div id="currentTime"></div>
+        <!-- Div for quiz content -->
+        <div id="questionsDiv">
+            <h1>Coding Quiz Challenge</h1>
+            <p>Try to answer the following code-related questions within the time limit. Keep in mind that incorrect
+                answers
+                will penalize your score/time by ten seconds!</p>
+            <ul id="choicesUl"></ul>
+            <!-- Buttons -->
+            <button id="startTime">Start Quiz</button>
         </div>
-    
 
-        <script src="./assets/js/script.js"></script>
+    </div>
+
+
+    <script src="questions.js"></script>
+
+
 </body>
 
 </html>
