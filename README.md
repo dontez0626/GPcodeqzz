@@ -23,4 +23,4 @@
 *  For Loops
 *  Functions
  * Local Storage set and get 
- 
+ *View published page @ https://dontez0626.github.io/GPcodeqzz/
