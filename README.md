@@ -24,3 +24,4 @@
 *  Functions
  * Local Storage set and get 
  *View published page @ https://dontez0626.github.io/GPcodeqzz/
+*Project Github URL = https://github.com/dontez0626/GPcodeqzz
