@@ -1,213 +1,358 @@
 /** @format */
 
-// Declared variables
+var containerQuestionEl = document.getElementById("question-container");
+var containerStartEl = document.getElementById("start-game-container");
+var containerEndEl = document.getElementById("end-container");
+var containerScoreEl = document.getElementById("score-banner");
+var formInitials = document.getElementById("initials-form");
+var containerHighScoresEl = document.getElementById("high-score-container");
+var ViewHighScoreEl = document.getElementById("view-high-scores");
+var listHighScoreEl = document.getElementById("high-score-list");
+var correctEl = document.getElementById("correct");
+var wrongEl = document.getElementById("wrong");
+// Start game,go back and clear high scores buttons.
+var btnStartEl = document.querySelector("#start-game");
+var btnGoBackEl = document.querySelector("#go-back");
+var btnClearScoresEl = document.querySelector("#clear-high-scores");
+//questions,answers & timer.
+var questionEl = document.getElementById("question");
+var answerbuttonsEl = document.getElementById("answer-buttons");
+var timerEl = document.querySelector("#timer");
 var score = 0;
-var questionIndex = 0;
+var timeleft;
+var gameover;
+timerEl.innerText = 0;
 
-// Start working code
-// Declared variables
-var currentTime = document.querySelector("#currentTime");
-var timer = document.querySelector("#startTime");
-var questionsDiv = document.querySelector("#questionsDiv");
-var wrapper = document.querySelector("#wrapper");
+//High Score Array
+var HighScores = [];
 
-// Seconds left is 15 seconds per question:
-var secondsLeft = 76;
-// Holds interval time
-var holdInterval = 0;
-// Holds penalty time
-var penalty = 10;
-// Creates new element
-var ulCreate = document.createElement("ul");
+// mark array for questions
+var arrayShuffledQuestions;
+var QuestionIndex = 0;
 
-// Var with array and object for questions
+// array of questions for quiz.
 var questions = [
   {
-    title: "Commonly used data types DO NOT include:",
-    choices: ["strings", "booleans", "alerts", "numbers"],
-    answer: "alerts",
-  },
-  {
-    title: "The condition in an if / else statement is enclosed within ____.",
-    choices: ["quotes", "curly brackets", "parentheses", "square brackets"],
-    answer: "parentheses",
-  },
-  {
-    title: "Arrays in Javascript can be used to store ____.",
+    q: "Commonly used data types DO NOT include:",
+    a: "4. alerts",
     choices: [
-      "numbers and strings",
-      "other arrays",
-      "booleans",
-      "all of the above",
+      { choice: "1. numbers" },
+      { choice: "2. booleans" },
+      { choice: "3. strings" },
+      { choice: "4. alerts" },
     ],
-    answer: "all of the above",
   },
   {
-    title:
-      "String values must be enclosed within ____ when being assigned to variables.",
-    choices: ["commas", "curly brackets", "quotes", "parenthesis"],
-    answer: "quotes",
+    q: "The condition in an if / else statement is enclosed within ____.",
+    a: "4. parentheses",
+    choices: [
+      { choice: "1. var" },
+      { choice: "2. curly brackets" },
+      { choice: "3. quotes" },
+      { choice: "4. parentheses" },
+    ],
   },
   {
-    title:
-      "A very useful tool for used during development and debugging for printing content to the debugger is:",
-    choices: ["Javascript", "terminal / bash", "for loops", "console log"],
-    answer: "console log",
+    q: "Arrays in Javascript can be used to store ____.",
+    a: "4. all of the above",
+    choices: [
+      { choice: "1. callback function" },
+      { choice: "2. undefined" },
+      { choice: "3. variable" },
+      { choice: "4. all of the above" },
+    ],
+  },
+  {
+    q: "String values must be enclosed within ____ when being assigned to variables.",
+    a: "3. quotes",
+    choices: [
+      { choice: "1. commas" },
+      { choice: "2. curly brackets" },
+      { choice: "3. quotes" },
+      { choice: "4. parenthesis" },
+    ],
+  },
+  {
+    q: "A very useful tool used during development and debugging for printing content to the debugger is:",
+    a: "4. console log",
+    choices: [
+      { choice: "1. Javascript" },
+      { choice: "2. terminal/bash" },
+      { choice: "3. for loops" },
+      { choice: "4. console log" },
+    ],
+  },
+  {
+    q: "Where is the correct place to insert a JavaScript?",
+    a: "1. The <body> section",
+    choices: [
+      { choice: "1. The <body> section" },
+      {
+        choice: "2. Both the <head> section and the <body> section are correct",
+      },
+      { choice: "3. The <head> section" },
+      { choice: "4. The <footer> section" },
+    ],
+  },
+  {
+    q: "What is getItem commonly used for?",
+    a: "2. local storage",
+    choices: [
+      { choice: "1. adding a string" },
+      { choice: "2. local storage" },
+      { choice: "3. setting a timer" },
+      { choice: "4. hiding a element" },
+    ],
   },
 ];
 
-// Triggers timer on button, shows user a display on the screen
-timer.addEventListener("click", function () {
-  // We are checking zero because its originally set to zero
-  if (holdInterval === 0) {
-    holdInterval = setInterval(function () {
-      secondsLeft--;
-      currentTime.textContent = "Time: " + secondsLeft;
+//If back button is clicked
+var renderStartPage = function () {
+  containerHighScoresEl.classList.add("hide");
+  containerHighScoresEl.classList.remove("appear");
+  containerStartEl.classList.remove("hide");
+  containerStartEl.classList.add("appear");
+  containerScoreEl.removeChild(containerScoreEl.lastChild);
+  QuestionIndex = 0;
+  gameover = "";
+  timerEl.textContent = 0;
+  score = 0;
 
-      if (secondsLeft <= 0) {
-        clearInterval(holdInterval);
-        allDone();
-        currentTime.textContent = "Time's up!";
-      }
-    }, 1000);
+  if ((correctEl.className = "appear")) {
+    correctEl.classList.remove("appear");
+    correctEl.classList.add("hide");
   }
-  render(questionIndex);
-});
-
-// Renders questions and choices to page:
-function render(questionIndex) {
-  // Clears existing data
-  questionsDiv.innerHTML = "";
-  ulCreate.innerHTML = "";
-  // For loops to loop through all info in array
-  for (var i = 0; i < questions.length; i++) {
-    // Appends question title only
-    var userQuestion = questions[questionIndex].title;
-    var userChoices = questions[questionIndex].choices;
-    questionsDiv.textContent = userQuestion;
+  if ((wrongEl.className = "appear")) {
+    wrongEl.classList.remove("appear");
+    wrongEl.classList.add("hide");
   }
-  // New for each for question choices
-  userChoices.forEach(function (newItem) {
-    var listItem = document.createElement("li");
-    listItem.textContent = newItem;
-    questionsDiv.appendChild(ulCreate);
-    ulCreate.appendChild(listItem);
-    listItem.addEventListener("click", compare);
-  });
-}
-// Event to compare choices with answer
-function compare(event) {
-  var element = event.target;
+};
 
-  if (element.matches("li")) {
-    var createDiv = document.createElement("div");
-    createDiv.setAttribute("id", "createDiv");
-    // Correct condition
-    if (element.textContent == questions[questionIndex].answer) {
-      score++;
-      createDiv.textContent =
-        "Correct! The answer is:  " + questions[questionIndex].answer;
-      // Correct condition
-    } else {
-      // Will deduct -5 seconds off secondsLeft for wrong answers
-      secondsLeft = secondsLeft - penalty;
-      createDiv.textContent =
-        "Wrong! The correct answer is:  " + questions[questionIndex].answer;
+//Check if game-over is true, or if there is time left. Start time at 60.
+var setTime = function () {
+  timeleft = 60;
+
+  var timercheck = setInterval(function () {
+    timerEl.innerText = timeleft;
+    timeleft--;
+
+    if (gameover) {
+      clearInterval(timercheck);
     }
-  }
-  // Question Index determines number question user is on
-  questionIndex++;
 
-  if (questionIndex >= questions.length) {
-    // All done will append last page with user stats
-    allDone();
-    createDiv.textContent =
-      "End of quiz!" +
-      " " +
-      "You got  " +
-      score +
-      "/" +
-      questions.length +
-      " Correct!";
+    if (timeleft < 0) {
+      showScore();
+      timerEl.innerText = 0;
+      clearInterval(timercheck);
+    }
+  }, 1000);
+};
+
+var startGame = function () {
+  //Show/hide start & quiz screen
+  containerStartEl.classList.add("hide");
+  containerStartEl.classList.remove("appear");
+  containerQuestionEl.classList.remove("hide");
+  containerQuestionEl.classList.add("appear");
+  //make questions appear in random order
+  arrayShuffledQuestions = questions.sort(() => Math.random() - 0.5);
+  setTime();
+  setQuestion();
+};
+
+//go to next question
+var setQuestion = function () {
+  resetAnswers();
+  displayQuestion(arrayShuffledQuestions[QuestionIndex]);
+};
+
+//Hide answer buttons
+var resetAnswers = function () {
+  while (answerbuttonsEl.firstChild) {
+    answerbuttonsEl.removeChild(answerbuttonsEl.firstChild);
+  }
+};
+
+// question/answer buttons appear
+var displayQuestion = function (index) {
+  questionEl.innerText = index.q;
+  for (var i = 0; i < index.choices.length; i++) {
+    var answerbutton = document.createElement("button");
+    answerbutton.innerText = index.choices[i].choice;
+    answerbutton.classList.add("btn");
+    answerbutton.classList.add("answerbtn");
+    answerbutton.addEventListener("click", answerCheck);
+    answerbuttonsEl.appendChild(answerbutton);
+  }
+};
+//make word correct appear
+var answerCorrect = function () {
+  if ((correctEl.className = "hide")) {
+    correctEl.classList.remove("hide");
+    correctEl.classList.add("banner");
+    wrongEl.classList.remove("banner");
+    wrongEl.classList.add("hide");
+  }
+};
+//make word wrong appear
+var answerWrong = function () {
+  if ((wrongEl.className = "hide")) {
+    wrongEl.classList.remove("hide");
+    wrongEl.classList.add("banner");
+    correctEl.classList.remove("banner");
+    correctEl.classList.add("hide");
+  }
+};
+
+//check answer
+var answerCheck = function (event) {
+  var selectedanswer = event.target;
+  if (arrayShuffledQuestions[QuestionIndex].a === selectedanswer.innerText) {
+    answerCorrect();
+    score = score + 10;
   } else {
-    render(questionIndex);
-  }
-  questionsDiv.appendChild(createDiv);
-}
-// All done will append last page
-function allDone() {
-  questionsDiv.innerHTML = "";
-  currentTime.innerHTML = "";
-
-  // Heading:
-  var createH1 = document.createElement("h1");
-  createH1.setAttribute("id", "createH1");
-  createH1.textContent = "All Done!";
-
-  questionsDiv.appendChild(createH1);
-
-  // Paragraph
-  var createP = document.createElement("p");
-  createP.setAttribute("id", "createP");
-
-  questionsDiv.appendChild(createP);
-
-  // Calculates time remaining and replaces it with score
-  if (secondsLeft >= 0) {
-    var timeRemaining = secondsLeft;
-    var createP2 = document.createElement("p");
-    clearInterval(holdInterval);
-    createP.textContent = "Your final score is: " + timeRemaining;
-
-    questionsDiv.appendChild(createP2);
+    answerWrong();
+    score = score - 5;
+    timeleft = timeleft - 4;
   }
 
-  // Label
-  var createLabel = document.createElement("label");
-  createLabel.setAttribute("id", "createLabel");
-  createLabel.textContent = "Enter your initials: ";
+  //start next question if there are more
+  QuestionIndex++;
+  if (arrayShuffledQuestions.length > QuestionIndex + 1) {
+    setQuestion();
+  } else {
+    gameover = "true";
+    showScore();
+  }
+};
 
-  questionsDiv.appendChild(createLabel);
+//Show total score after game ends
+var showScore = function () {
+  containerQuestionEl.classList.add("hide");
+  containerEndEl.classList.remove("hide");
+  containerEndEl.classList.add("appear");
 
-  // input
-  var createInput = document.createElement("input");
-  createInput.setAttribute("type", "text");
-  createInput.setAttribute("id", "initials");
-  createInput.textContent = "";
+  var scoreDisplay = document.createElement("p");
+  scoreDisplay.innerText = "Your final score is " + score + "!";
+  containerScoreEl.appendChild(scoreDisplay);
+};
 
-  questionsDiv.appendChild(createInput);
+//create high score
+var createHighScore = function (event) {
+  event.preventDefault();
+  var initials = document.querySelector("#initials").value;
+  if (!initials) {
+    alert("Enter your intials!");
+    return;
+  }
 
-  // submit
-  var createSubmit = document.createElement("button");
-  createSubmit.setAttribute("type", "submit");
-  createSubmit.setAttribute("id", "Submit");
-  createSubmit.textContent = "Submit";
+  formInitials.reset();
 
-  questionsDiv.appendChild(createSubmit);
+  var HighScore = {
+    initials: initials,
+    score: score,
+  };
 
-  // Event listener to capture initials and local storage for initials and score
-  createSubmit.addEventListener("click", function () {
-    var initials = createInput.value;
-
-    if (initials === null) {
-      console.log("No value entered!");
-    } else {
-      var finalScore = {
-        initials: initials,
-        score: timeRemaining,
-      };
-      console.log(finalScore);
-      var allScores = localStorage.getItem("allScores");
-      if (allScores === null) {
-        allScores = [];
-      } else {
-        allScores = JSON.parse(allScores);
-      }
-      allScores.push(finalScore);
-      var newScore = JSON.stringify(allScores);
-      localStorage.setItem("allScores", newScore);
-      // Travels to final page
-      window.location.replace("./scores.html");
-    }
+  //channel scores
+  HighScores.push(HighScore);
+  HighScores.sort((a, b) => {
+    return b.score - a.score;
   });
-}
+
+  //Clear list
+  while (listHighScoreEl.firstChild) {
+    listHighScoreEl.removeChild(listHighScoreEl.firstChild);
+  }
+  //high scores elements (in order)
+  for (var i = 0; i < HighScores.length; i++) {
+    var highscoreEl = document.createElement("li");
+    highscoreEl.ClassName = "high-score";
+    highscoreEl.innerHTML =
+      HighScores[i].initials + " - " + HighScores[i].score;
+    listHighScoreEl.appendChild(highscoreEl);
+  }
+
+  saveHighScore();
+  displayHighScores();
+};
+//save high score
+var saveHighScore = function () {
+  localStorage.setItem("HighScores", JSON.stringify(HighScores));
+};
+
+//load high score
+var loadHighScore = function () {
+  var LoadedHighScores = localStorage.getItem("HighScores");
+  if (!LoadedHighScores) {
+    return false;
+  }
+
+  LoadedHighScores = JSON.parse(LoadedHighScores);
+  LoadedHighScores.sort((a, b) => {
+    return b.score - a.score;
+  });
+
+  for (var i = 0; i < LoadedHighScores.length; i++) {
+    var highscoreEl = document.createElement("li");
+    highscoreEl.ClassName = "high-score";
+    highscoreEl.innerText =
+      LoadedHighScores[i].initials + " - " + LoadedHighScores[i].score;
+    listHighScoreEl.appendChild(highscoreEl);
+
+    HighScores.push(LoadedHighScores[i]);
+  }
+};
+
+//show high score screen when link is clicked or when intiials are entered
+var displayHighScores = function () {
+  containerHighScoresEl.classList.remove("hide");
+  containerHighScoresEl.classList.add("appear");
+  gameover = "true";
+
+  if ((containerEndEl.className = "appear")) {
+    containerEndEl.classList.remove("appear");
+    containerEndEl.classList.add("hide");
+  }
+  if ((containerStartEl.className = "appear")) {
+    containerStartEl.classList.remove("appear");
+    containerStartEl.classList.add("hide");
+  }
+
+  if ((containerQuestionEl.className = "appear")) {
+    containerQuestionEl.classList.remove("appear");
+    containerQuestionEl.classList.add("hide");
+  }
+
+  if ((correctEl.className = "appear")) {
+    correctEl.classList.remove("appear");
+    correctEl.classList.add("hide");
+  }
+
+  if ((wrongEl.className = "appear")) {
+    wrongEl.classList.remove("appear");
+    wrongEl.classList.add("hide");
+  }
+};
+//clears high scores
+var clearScores = function () {
+  HighScores = [];
+
+  while (listHighScoreEl.firstChild) {
+    listHighScoreEl.removeChild(listHighScoreEl.firstChild);
+  }
+
+  localStorage.clear(HighScores);
+};
+
+loadHighScore();
+
+//when start is clicked, start game
+btnStartEl.addEventListener("click", startGame);
+//submit button -- enter or click
+formInitials.addEventListener("submit", createHighScore);
+//when view high-scores is clicked
+ViewHighScoreEl.addEventListener("click", displayHighScores);
+//back button
+btnGoBackEl.addEventListener("click", renderStartPage);
+//clear high score button
+btnClearScoresEl.addEventListener("click", clearScores);
